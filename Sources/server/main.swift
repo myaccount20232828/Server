@@ -55,7 +55,7 @@ func HandlePosixSpawn(_ Request: NSDictionary) -> NSDictionary {
     }
     let Arguments = Request["arguments"] as? [String] ?? []
     let UID = Request["uid"] as? Int ?? 501
-    let (Status, Output) = runCommand(Command, Arguments, uid_t(UID), "")
+    let (Status, Output) = runCommand(Command, Arguments, uid_t(UID))
     return ["status": Status, "output": Output]
 }
 
