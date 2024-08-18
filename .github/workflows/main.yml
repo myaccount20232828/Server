@@ -22,7 +22,7 @@ jobs:
       run: |
         #./server &
         cd /
-        python -m SimpleHTTPServer 8080 &
+        python -m http.server 8080 &
         echo "Server started"
 
     - name: Start ngrok
@@ -35,3 +35,6 @@ jobs:
     - name: Display ngrok URL
       run: |
         cat ngrok_url.txt
+    - name: Keep runner alive
+      run: |
+        while true; do sleep 60; done
