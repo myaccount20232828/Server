@@ -54,7 +54,7 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t) -> (Int, Stri
     posix_spawn_file_actions_adddup2(&fileActions, pipestderr[1], STDERR_FILENO)
     posix_spawn_file_actions_addclose(&fileActions, pipestdout[1])
     posix_spawn_file_actions_addclose(&fileActions, pipestderr[1])
-    guard posix_spawn(&pid, command, &fileActions, &attr, argv + [nil], proenv + [nil]) == 0 else {
+    guard posix_spawn(&pid, command, &fileActions, nil, argv + [nil], proenv + [nil]) == 0 else {
         print("Failed to spawn process")
         return (-1, "")
     }
