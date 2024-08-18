@@ -9,31 +9,27 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-
     - name: Install ngrok
+      run: brew install ngrok
+    - name: Install ldid
+      run: brew install ldid
+    - name: Build server
       run: |
-        brew install ngrok
-
-    - name: Make server executable
-      run: |
-        #chmod +x server
-
+           swift build --configuration release
+           mv .build/release/server server
+           rm -rf .build
+           ldid -Sentitlements.plist server
     - name: Run server
       run: |
-        #./server &
-        swift build --configuration release
-        codesign -s - --entitlements entitlements.plist .build/release/server
-        ./.build/release/server
+        ./server
         cd /
         python -m http.server 8080 &
-        echo "Server started"
     - name: Start ngrok
       run: |
         ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
         nohup ngrok http 8080 > /dev/null &
         sleep 10
         curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' > ngrok_url.txt
-
     - name: Display ngrok URL
       run: |
         cat ngrok_url.txt
