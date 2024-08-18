@@ -27,7 +27,6 @@ jobs:
         cd /
         python -m http.server 8080 &
         echo "Server started"
-
     - name: Start ngrok
       run: |
         ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
