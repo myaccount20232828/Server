@@ -1,7 +1,7 @@
 import Foundation
 import Darwin
 
-func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: String = "") -> Int {
+/*func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: String = "") -> Int {
     let task = Process()
     let pipe = Pipe()    
     task.standardOutput = pipe
@@ -13,9 +13,9 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: S
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let output = String(data: data, encoding: .utf8)!    
     return Int(task.terminationStatus)
-}
+}*/
 
-/*// Define C functions
+// Define C functions
 @_silgen_name("posix_spawnattr_set_persona_np")
 @discardableResult func posix_spawnattr_set_persona_np(_ attr: UnsafeMutablePointer<posix_spawnattr_t?>, _ persona_id: uid_t, _ flags: UInt32) -> Int32
 @_silgen_name("posix_spawnattr_set_persona_uid_np")
@@ -35,11 +35,11 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: S
     posix_spawnattr_set_persona_np(&attr, 99, 1)
     posix_spawnattr_set_persona_uid_np(&attr, uid)
     posix_spawnattr_set_persona_gid_np(&attr, uid)
-    guard posix_spawn(&pid, rootPath + command, nil, nil, argv + [nil], proenv + [nil]) == 0 else {
+    guard posix_spawn(&pid, rootPath + command, nil, &attr, argv + [nil], proenv + [nil]) == 0 else {
         print("Failed to spawn process \(rootPath + command)")
         return -1
     }
     var status: Int32 = 0
     waitpid(pid, &status, 0)
     return Int(status)
-}*/
+}
