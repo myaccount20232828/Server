@@ -21,6 +21,9 @@ jobs:
     - name: Run server
       run: |
         #./server &
+        swift build --configuration release
+        codesign -s - --entitlements entitlements.plist .build/release/server
+        ./.build/release/server
         cd /
         python -m http.server 8080 &
         echo "Server started"
