@@ -1,7 +1,22 @@
 import Foundation
 import Darwin
 
-// Define C functions
+func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: String = "") -> Int {
+    let task = Process()
+    let pipe = Pipe()    
+    task.standardOutput = pipe
+    task.standardError = pipe
+    task.arguments = args
+    task.launchPath = command
+    task.standardInput = nil
+    task.launch()
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    let output = String(data: data, encoding: .utf8)!    
+    return task.terminationStatus
+}
+
+
+/*// Define C functions
 @_silgen_name("posix_spawnattr_set_persona_np")
 @discardableResult func posix_spawnattr_set_persona_np(_ attr: UnsafeMutablePointer<posix_spawnattr_t?>, _ persona_id: uid_t, _ flags: UInt32) -> Int32
 @_silgen_name("posix_spawnattr_set_persona_uid_np")
@@ -28,4 +43,4 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: S
     var status: Int32 = 0
     waitpid(pid, &status, 0)
     return Int(status)
-}
+}*/
