@@ -1,8 +1,9 @@
-import SwiftUI
+import Foundation
 import GCDWebServer
 
 setuid(0)
 setgid(0)
+print("UID: \(getuid())")
 
 let WebServer = GCDWebServer()
 
@@ -54,8 +55,7 @@ func HandlePosixSpawn(_ Request: NSDictionary) -> NSDictionary {
     }
     let Arguments = Request["arguments"] as? [String] ?? []
     let UID = Request["uid"] as? Int ?? 501
-    let UseJBRoot = Request["use_jb_root"] as? Bool ?? true
-    return ["status": runCommand(Command, Arguments, uid_t(UID), UseJBRoot ? JBRoot : "")]
+    return ["status": runCommand(Command, Arguments, uid_t(UID), "")]
 }
 
 func Error(_ ErrorString: String) -> NSDictionary {
@@ -73,9 +73,7 @@ WebServer.addDefaultHandler(forMethod: "POST", request: GCDWebServerFileRequest.
 })
 
 WebServer.start(withPort: 8080, bonjourName: "GCD Web Server")
-
 RunLoop.main.run()
-
 
 func IsDirectory(_ Path: String) -> Bool {
     var IsDirectory: ObjCBool = false
