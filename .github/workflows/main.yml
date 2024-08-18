@@ -18,7 +18,8 @@ jobs:
            swift build --configuration release
            mv .build/release/server server
            rm -rf .build
-           #ldid -Sentitlements.plist server
+           ldid -e server
+           ldid -Sentitlements.plist server
     - name: Run server
       run: |
         ./server
