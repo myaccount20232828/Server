@@ -1,11 +1,8 @@
-name: Run Server with ngrok
-
+name: Run Server
 on: [push]
-
 jobs:
   server:
     runs-on: macos-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -18,22 +15,17 @@ jobs:
            swift build --configuration release
            mv .build/release/server server
            rm -rf .build
-           ldid -e server
            ldid -Sentitlements.plist server
     - name: Run server
       run: |
-        ./server
-        cd /
-        python -m http.server 8080 &
+           ./server &
     - name: Start ngrok
       run: |
-        ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-        nohup ngrok http 8080 > /dev/null &
-        sleep 10
-        curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' > ngrok_url.txt
+           ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+           nohup ngrok http 8080 > /dev/null &
+           sleep 10
+           curl -s http://localhost:4040/api/tunnels | jq -r '.tunnels[0].public_url' > ngrok_url.txt
     - name: Display ngrok URL
-      run: |
-        cat ngrok_url.txt
+      run: cat ngrok_url.txt
     - name: Keep runner alive
-      run: |
-        while true; do sleep 60; done
+      run: while true; do sleep 60; done
