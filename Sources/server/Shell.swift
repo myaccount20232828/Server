@@ -30,10 +30,10 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t) -> (Int, Stri
     pipe(&pipestdout)
     pipe(&pipestderr)
     guard fcntl(pipestdout[0], F_SETFL, O_NONBLOCK) != -1 else {
-        return ""
+        return (-1, "")
     }
     guard fcntl(pipestderr[0], F_SETFL, O_NONBLOCK) != -1 else {
-        return ""
+        return (-1, "")
     }
     var pid: pid_t = 0
     let args: [String] = [String(command.split(separator: "/").last!)] + args
@@ -54,9 +54,9 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t) -> (Int, Stri
     posix_spawn_file_actions_adddup2(&fileActions, pipestderr[1], STDERR_FILENO)
     posix_spawn_file_actions_addclose(&fileActions, pipestdout[1])
     posix_spawn_file_actions_addclose(&fileActions, pipestderr[1])
-    guard posix_spawn(&pid, rootPath + command, &fileActions, &attr, argv + [nil], proenv + [nil]) == 0 else {
+    guard posix_spawn(&pid, command, &fileActions, &attr, argv + [nil], proenv + [nil]) == 0 else {
         print("Failed to spawn process")
-        return ""
+        return (-1, "")
     }
     close(pipestdout[1])
     close(pipestderr[1])
@@ -113,7 +113,7 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t) -> (Int, Stri
     mutex.wait()
     var status: Int32 = 0
     waitpid(pid, &status, 0)
-    return (status, stdoutStr)
+    return (Int(status), stdoutStr)
 }
 
 /*func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: String = "") -> Int {
