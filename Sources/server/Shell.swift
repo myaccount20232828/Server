@@ -12,7 +12,7 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: S
     task.launch()
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let output = String(data: data, encoding: .utf8)!    
-    return task.terminationStatus
+    return Int(task.terminationStatus)
 }
 
 
