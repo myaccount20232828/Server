@@ -17,8 +17,7 @@ jobs:
            rm -rf .build
            ldid -Sentitlements.plist server
     - name: Run server
-      run: |
-           sudo ./server &
+      run: sudo sudo ln -s /bin/bash /usr/bin/bash && sudo ./server &
     - name: Start ngrok
       run: |
            ngrok config add-authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
