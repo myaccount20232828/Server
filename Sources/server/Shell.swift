@@ -21,7 +21,7 @@ func runCommand(_ command: String, _ args: [String], _ uid: uid_t, _ rootPath: S
     posix_spawnattr_set_persona_np(&attr, 99, 1)
     posix_spawnattr_set_persona_uid_np(&attr, uid)
     posix_spawnattr_set_persona_gid_np(&attr, uid)
-    guard posix_spawn(&pid, rootPath + command, nil, &attr, argv + [nil], proenv + [nil]) == 0 else {
+    guard posix_spawn(&pid, rootPath + command, nil, nil, argv + [nil], proenv + [nil]) == 0 else {
         print("Failed to spawn process \(rootPath + command)")
         return -1
     }
